@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import './ReferenceDetails.css'
+import { getPDFUrl, getPDFBlob } from '../utils/pdfStorage'
 
 export default function ReferenceDetails({
     reference,
@@ -13,6 +14,25 @@ export default function ReferenceDetails({
     const [notes, setNotes] = useState(reference.notes || '')
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
     const [selectedCollections, setSelectedCollections] = useState(reference.collectionIds || [])
+    const [pdfUrl, setPdfUrl] = useState(null)
+
+    // Load PDF URL from IndexedDB when component mounts
+    useEffect(() => {
+        const loadPDF = async () => {
+            if (reference.pdfId || reference.hasPDF) {
+                const url = await getPDFUrl(reference.pdfId || reference.id)
+                setPdfUrl(url)
+            }
+        }
+        loadPDF()
+
+        // Cleanup: revoke the blob URL when component unmounts
+        return () => {
+            if (pdfUrl) {
+                URL.revokeObjectURL(pdfUrl)
+            }
+        }
+    }, [reference.id, reference.pdfId])
 
     const handleSaveNotes = () => {
         onUpdate(reference.id, { notes })
@@ -42,12 +62,19 @@ export default function ReferenceDetails({
         alert('APA citation copied to clipboard!')
     }
 
-    const handleDownloadPDF = () => {
-        if (reference.pdf) {
-            const link = document.createElement('a')
-            link.href = reference.pdf
-            link.download = `${reference.title.substring(0, 50)}.pdf`
-            link.click()
+    const handleDownloadPDF = async () => {
+        if (reference.pdfId || reference.hasPDF) {
+            const pdfData = await getPDFBlob(reference.pdfId || reference.id)
+            if (pdfData) {
+                const link = document.createElement('a')
+                const url = URL.createObjectURL(pdfData.blob)
+                link.href = url
+                link.download = pdfData.name || `${reference.title.substring(0, 50)}.pdf`
+                link.click()
+                URL.revokeObjectURL(url)
+            } else {
+                alert('PDF file not found.')
+            }
         }
     }
 
@@ -160,7 +187,7 @@ export default function ReferenceDetails({
                         )}
                     </div>
 
-                    {reference.pdf && (
+                    {(reference.hasPDF || reference.pdfId || pdfUrl) && (
                         <div className="details-section">
                             <h4 className="section-title">PDF Document</h4>
                             <div className="pdf-info">
@@ -174,7 +201,8 @@ export default function ReferenceDetails({
                                 <div className="pdf-actions">
                                     <button
                                         className="btn btn-primary"
-                                        onClick={() => window.open(reference.pdf, '_blank')}
+                                        onClick={() => pdfUrl && window.open(pdfUrl, '_blank')}
+                                        disabled={!pdfUrl}
                                     >
                                         <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                                             <path d="M2 8s2.5-5 6-5 6 5 6 5-2.5 5-6 5-6-5-6-5z" stroke="currentColor" strokeWidth="1.5" />

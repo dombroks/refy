@@ -5,6 +5,8 @@ import ReferenceList from './components/ReferenceList'
 import ReferenceDetails from './components/ReferenceDetails'
 import BatchAddReferencesModal from './components/BatchAddReferencesModal'
 import SearchBar from './components/SearchBar'
+import { savePDF } from './utils/pdfStorage'
+import { extractPDFMetadata } from './utils/pdfMetadata'
 
 function App() {
   const [references, setReferences] = useState([])
@@ -213,9 +215,16 @@ function App() {
     for (let i = 0; i < files.length; i++) {
       const file = files[i]
       try {
+        // Generate a unique ID for this reference
+        const referenceId = Date.now().toString() + Math.random().toString(36).substr(2, 9)
+
+        // Save PDF to IndexedDB
+        await savePDF(referenceId, file)
+
         const metadata = await extractPDFMetadata(file)
         const reference = {
-          title: metadata.title || '',
+          id: referenceId,
+          title: metadata.title || file.name.replace('.pdf', ''),
           authors: metadata.authors?.length > 0 ? metadata.authors : [],
           year: metadata.year || new Date().getFullYear(),
           journal: metadata.journal || '',
@@ -229,7 +238,8 @@ function App() {
           abstract: metadata.abstract || '',
           tags: metadata.journalRanking ? [metadata.journalRanking] : [],
           collectionIds: [],
-          pdf: URL.createObjectURL(file),
+          pdfId: referenceId, // Store the PDF ID
+          hasPDF: true, // Flag to indicate PDF is available
           isFavorite: false,
           dateAdded: new Date().toISOString()
         }
@@ -311,10 +321,7 @@ function App() {
           onRenameCollection={renameCollection}
           referenceCount={references.length}
           onAddReference={() => setIsAddModalOpen(true)}
-          onFilesDrop={(files) => {
-            setDroppedFiles(files)
-            setIsAddModalOpen(true)
-          }}
+          onFilesDrop={handleFilesDrop}
           viewMode={viewMode}
           setViewMode={setViewMode}
         />
