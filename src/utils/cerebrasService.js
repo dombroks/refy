@@ -18,7 +18,11 @@ export async function analyzePaperWithCerebras(text, apiKey) {
     - summary: A concise summary of the paper (max 150 words).
     - researchQuestion: The main problem or research question being addressed.
     - methodology: The methods, algorithms, or approaches used.
+    - dataset: The datasets used for training or evaluation.
+    - metrics: The evaluation metrics used.
     - keyFindings: The main results, discoveries, or conclusions.
+    - majorResults: The key quantitative or qualitative results.
+    - comparison: How the proposed method compares to baselines or state-of-the-art.
     - strengths: The strong points of the paper.
     - weaknesses: The limitations or weak points.
     - contributions: How this paper advances the field.

@@ -8,7 +8,11 @@ export default function TechnicalSheet({ reference, onClose, onSave }) {
         summary: '',
         researchQuestion: '',
         methodology: '',
+        dataset: '',
+        metrics: '',
         keyFindings: '',
+        majorResults: '',
+        comparison: '',
         strengths: '',
         weaknesses: '',
         contributions: '',
@@ -200,6 +204,34 @@ export default function TechnicalSheet({ reference, onClose, onSave }) {
                             />
                         </div>
 
+                        {/* Dataset - Left Column */}
+                        <div className="review-section">
+                            <div className="section-header-with-ai">
+                                <h3 className="review-section-title">💾 Used Dataset</h3>
+                            </div>
+                            <textarea
+                                className="review-textarea"
+                                placeholder="Datasets used for training and evaluation..."
+                                value={review.dataset}
+                                onChange={(e) => handleFieldChange('dataset', e.target.value)}
+                                rows={3}
+                            />
+                        </div>
+
+                        {/* Metrics - Right Column */}
+                        <div className="review-section">
+                            <div className="section-header-with-ai">
+                                <h3 className="review-section-title">📏 Evaluation Metrics</h3>
+                            </div>
+                            <textarea
+                                className="review-textarea"
+                                placeholder="Metrics used to evaluate performance..."
+                                value={review.metrics}
+                                onChange={(e) => handleFieldChange('metrics', e.target.value)}
+                                rows={3}
+                            />
+                        </div>
+
                         {/* Key Findings - Left Column */}
                         <div className="review-section">
                             <div className="section-header-with-ai">
@@ -214,8 +246,36 @@ export default function TechnicalSheet({ reference, onClose, onSave }) {
                             />
                         </div>
 
-                        {/* Contributions - Right Column */}
+                        {/* Major Results - Right Column */}
                         <div className="review-section">
+                            <div className="section-header-with-ai">
+                                <h3 className="review-section-title">📈 Major Results</h3>
+                            </div>
+                            <textarea
+                                className="review-textarea"
+                                placeholder="Quantitative results and performance numbers..."
+                                value={review.majorResults}
+                                onChange={(e) => handleFieldChange('majorResults', e.target.value)}
+                                rows={3}
+                            />
+                        </div>
+
+                        {/* Comparison - Full Width */}
+                        <div className="review-section full-width">
+                            <div className="section-header-with-ai">
+                                <h3 className="review-section-title">⚖️ Comparison</h3>
+                            </div>
+                            <textarea
+                                className="review-textarea"
+                                placeholder="Comparison with baselines and state-of-the-art..."
+                                value={review.comparison}
+                                onChange={(e) => handleFieldChange('comparison', e.target.value)}
+                                rows={3}
+                            />
+                        </div>
+
+                        {/* Contributions - Full Width */}
+                        <div className="review-section full-width">
                             <h3 className="review-section-title">🌟 Contributions</h3>
                             <textarea
                                 className="review-textarea"
