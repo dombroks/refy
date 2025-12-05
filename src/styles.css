@@ -3232,6 +3232,7 @@ select.input {
   border-top: 1px solid var(--border-subtle);
   display: flex;
   justify-content: flex-end;
+  gap: var(--spacing-sm);
   background: var(--bg-secondary);
 }
 

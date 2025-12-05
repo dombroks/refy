@@ -127,7 +127,7 @@ export default function SettingsModal({ onClose }) {
                 </div>
 
                 <div className="settings-footer">
-                    <button className="btn btn-secondary mr-2" onClick={onClose}>Close</button>
+                    <button className="btn btn-secondary" onClick={onClose}>Close</button>
                     <button className="btn btn-primary" onClick={handleSave}>
                         {isSaved ? 'Saved!' : 'Save Changes'}
                     </button>
